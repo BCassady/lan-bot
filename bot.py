@@ -40,7 +40,7 @@ async def on_ready():
 async def set_lan(ctx, month, day, year):
 
     global lan
-    lan = datetime(int(year), int(month), int(day), 15, 0, 0)
+    lan = datetime(int(year), int(month), int(day), 20, 0, 0)
     response = "Lan set to " + lan.strftime("%m/%d/%Y") 
     save(lan)
     await ctx.send(response)
