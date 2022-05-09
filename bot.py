@@ -5,6 +5,7 @@ from pydoc import describe
 from discord.ext import commands
 from dotenv import load_dotenv
 from datetime import datetime
+from datetime import timedelta
 
 import pickle
 
@@ -39,7 +40,7 @@ async def on_ready():
 async def set_lan(ctx, month, day, year):
 
     global lan
-    lan = datetime(int(year), int(month), int(day))
+    lan = datetime(int(year), int(month), int(day), 15, 0, 0)
     response = "Lan set to " + lan.strftime("%m/%d/%Y") 
     save(lan)
     await ctx.send(response)
@@ -68,6 +69,22 @@ async def cancel_lan(ctx):
 
     save(lan)
     
+    await ctx.send(response)
+
+@bot.command(name='timeuntillan', help='Displays the time until LAN')
+async def time_until_lan(ctx):
+
+    global lan
+    lan = load()
+
+    td = lan - datetime.now()
+
+    days = td.days
+    hours, remainder = divmod(td.seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+
+    response = "LAN IS IN " + str(days) + " DAYS " + str(hours) + " HOURS " + str(minutes) + " MINUTES " + str(seconds) + " SECONDS" 
+
     await ctx.send(response)
 
 bot.run(TOKEN)
