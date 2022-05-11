@@ -7,8 +7,9 @@ from dotenv import load_dotenv
 from datetime import datetime
 from datetime import timedelta
 
-import pickle
+import random
 
+import pickle
 
 def save(to_save):
     pickle.dump( to_save, open( "save.p", "wb" ) )
@@ -86,5 +87,12 @@ async def time_until_lan(ctx):
     response = "LAN IS IN " + str(days) + " DAYS " + str(hours) + " HOURS " + str(minutes) + " MINUTES " + str(seconds) + " SECONDS" 
 
     await ctx.send(response)
+
+@bot.command(name='rot', help='Displays random rot wiki link')
+async def time_until_lan(ctx):
+    choices = pickle.load( open( "realmeye.p", "rb" ) )
+    chosen = random.choice(choices)
+
+    await ctx.send("https://www.realmeye.com" + chosen)
 
 bot.run(TOKEN)
