@@ -7,9 +7,13 @@ from dotenv import load_dotenv
 from datetime import datetime
 from datetime import timedelta
 
+import discord 
+
 import random
 
 import pickle
+
+import glob
 
 def save(to_save):
     pickle.dump( to_save, open( "save.p", "wb" ) )
@@ -94,5 +98,16 @@ async def time_until_lan(ctx):
     chosen = random.choice(choices)
 
     await ctx.send("https://www.realmeye.com" + chosen)
+
+@bot.command(name='lan', help='Missing lan right now? Get a random lan image')
+async def lan(ctx):
+    file_path_type = ["./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.mov"]
+    images = glob.glob(random.choice(file_path_type))
+
+    random_image = random.choice(images)
+
+    with open(random_image, 'rb') as f:
+        picture = discord.File(f)
+        await ctx.send(file=picture)
 
 bot.run(TOKEN)
