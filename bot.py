@@ -111,7 +111,7 @@ async def lan(ctx):
         await ctx.send(file=picture)
 
 @bot.command(name='8ball', help='Answers any question you have')
-async def lan(ctx, question):
+async def lan(ctx, *, question):
 
     answers = ["Oh yes brudda", "If you go to LAN, yes", "Without a doubt", "Yes", "I would bet my life on it",
     "As likely as the toilet is to be filled at LAN", "As far as I can tell, yes", "No", "Nope", "No shot", "No way brudda",
