@@ -110,4 +110,17 @@ async def lan(ctx):
         picture = discord.File(f)
         await ctx.send(file=picture)
 
+@bot.command(name='8ball', help='Answers any question you have')
+async def lan(ctx, question):
+
+    answers = ["Oh yes brudda", "If you go to LAN, yes", "Without a doubt", "Yes", "I would bet my life on it",
+    "As likely as the toilet is to be filled at LAN", "As far as I can tell, yes", "No", "Nope", "No shot", "No way brudda",
+    "Idk about that one", "This question is too hard for me :sob:", "I cannot decide", "Hell no", "That question is messed up wtf",
+    "Oh lawd yes"]
+
+    response = "> " + question + "\n"
+    
+    response += random.choice(answers)
+
+    await ctx.send(response)
 bot.run(TOKEN)
