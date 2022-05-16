@@ -127,7 +127,7 @@ async def lan(ctx, *, question):
 
     await ctx.send(response)
 
-WHEN = time(15, 0, 0)  # 3:00 PM
+WHEN = time(20, 0, 0)  # 3:00 PM
 channel_id = 715038755211444324 
 
 async def called_once_a_day():  # Fired every day
@@ -138,7 +138,7 @@ async def called_once_a_day():  # Fired every day
     await channel.send("OMG LAN IN " + str(days))
 
 async def background_task():
-    now = datetime.now(timezone('US/Central'))
+    now = datetime.utcnow()
     if now.time() > WHEN:  # Make sure loop doesn't start after {WHEN} as then it will send immediately the first time as negative seconds will make the sleep yield instantly
         tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
         seconds = (tomorrow - now).total_seconds()  # Seconds until tomorrow (midnight)
@@ -153,4 +153,22 @@ async def background_task():
         seconds = (tomorrow - now).total_seconds()  # Seconds until tomorrow (midnight)
         await asyncio.sleep(seconds)   # Sleep until tomorrow and then the loop will start a new iteration
 
+@bot.command(name='ask', help='Answers an \"or\" question')
+async def lan(ctx, *, question):
+
+    if "or" not in question:
+        await ctx.send("Question must contain \"or\"")
+        return 
+
+    a1, a2 = question.split(" or ") 
+
+    answers = response = "> " + question + "\n" 
+
+    response = "> " + question + "\n"
+    
+    response += random.choice([a1, a2])
+
+    await ctx.send(response)
+
+bot.loop.create_task(background_task())
 bot.run(TOKEN)
