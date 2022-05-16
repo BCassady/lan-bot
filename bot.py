@@ -4,7 +4,7 @@ from pydoc import describe
 
 from discord.ext import commands
 from dotenv import load_dotenv
-from datetime import date, datetime
+from datetime import date, datetime, time
 from datetime import timedelta
 
 from pytz import timezone
@@ -127,7 +127,7 @@ async def lan(ctx, *, question):
 
     await ctx.send(response)
 
-WHEN = datetime.time(15, 0, 0)  # 3:00 PM
+WHEN = time(15, 0, 0)  # 3:00 PM
 channel_id = 715038755211444324 
 
 async def called_once_a_day():  # Fired every day
@@ -140,7 +140,7 @@ async def called_once_a_day():  # Fired every day
 async def background_task():
     now = datetime.now(timezone('US/Central'))
     if now.time() > WHEN:  # Make sure loop doesn't start after {WHEN} as then it will send immediately the first time as negative seconds will make the sleep yield instantly
-        tomorrow = datetime.combine(now.date() + timedelta(days=1), datetime.time(0))
+        tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
         seconds = (tomorrow - now).total_seconds()  # Seconds until tomorrow (midnight)
         await asyncio.sleep(seconds)   # Sleep until tomorrow and then the loop will start 
     while True:
@@ -149,7 +149,7 @@ async def background_task():
         seconds_until_target = (target_time - now).total_seconds()
         await asyncio.sleep(seconds_until_target)  # Sleep until we hit the target time
         await called_once_a_day()  # Call the helper function that sends the message
-        tomorrow = datetime.combine(now.date() + timedelta(days=1), datetime.time(0))
+        tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
         seconds = (tomorrow - now).total_seconds()  # Seconds until tomorrow (midnight)
         await asyncio.sleep(seconds)   # Sleep until tomorrow and then the loop will start a new iteration
 
