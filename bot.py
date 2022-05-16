@@ -4,8 +4,12 @@ from pydoc import describe
 
 from discord.ext import commands
 from dotenv import load_dotenv
-from datetime import datetime
+from datetime import date, datetime
 from datetime import timedelta
+
+from pytz import timezone
+
+import asyncio
 
 import discord 
 
@@ -114,8 +118,7 @@ async def lan(ctx):
 async def lan(ctx, *, question):
 
     answers = ["Oh yes brudda", "If you go to LAN, yes", "Without a doubt", "Yes", "I would bet my life on it",
-    "As likely as the toilet is to be filled at LAN", "As far as I can tell, yes", "No", "Nope", "No shot", "No way brudda",
-    "Idk about that one", "This question is too hard for me :sob:", "I cannot decide", "Hell no", "That question is messed up wtf",
+    "As likely as the toilet is to be filled at LAN", "As far as I can tell, yes", "No", "Nope", "No shot", "No way brudda", "Hell no",
     "Oh lawd yes"]
 
     response = "> " + question + "\n"
@@ -123,4 +126,31 @@ async def lan(ctx, *, question):
     response += random.choice(answers)
 
     await ctx.send(response)
+
+WHEN = datetime.time(15, 0, 0)  # 3:00 PM
+channel_id = 715038755211444324 
+
+async def called_once_a_day():  # Fired every day
+    await bot.wait_until_ready()  # Make sure your guild cache is ready so the channel can be found via get_channel
+    channel = bot.get_channel(channel_id) # Note: It's more efficient to do bot.get_guild(guild_id).get_channel(channel_id) as there's less looping involved, but just get_channel still works fine
+    td = lan - datetime.now()
+    days = td.days
+    await channel.send("OMG LAN IN " + str(days))
+
+async def background_task():
+    now = datetime.now(timezone('US/Central'))
+    if now.time() > WHEN:  # Make sure loop doesn't start after {WHEN} as then it will send immediately the first time as negative seconds will make the sleep yield instantly
+        tomorrow = datetime.combine(now.date() + timedelta(days=1), datetime.time(0))
+        seconds = (tomorrow - now).total_seconds()  # Seconds until tomorrow (midnight)
+        await asyncio.sleep(seconds)   # Sleep until tomorrow and then the loop will start 
+    while True:
+        now = datetime.utcnow() # You can do now() or a specific timezone if that matters, but I'll leave it with utcnow
+        target_time = datetime.combine(now.date(), WHEN)  # 6:00 PM today (In UTC)
+        seconds_until_target = (target_time - now).total_seconds()
+        await asyncio.sleep(seconds_until_target)  # Sleep until we hit the target time
+        await called_once_a_day()  # Call the helper function that sends the message
+        tomorrow = datetime.combine(now.date() + timedelta(days=1), datetime.time(0))
+        seconds = (tomorrow - now).total_seconds()  # Seconds until tomorrow (midnight)
+        await asyncio.sleep(seconds)   # Sleep until tomorrow and then the loop will start a new iteration
+
 bot.run(TOKEN)
