@@ -131,11 +131,12 @@ WHEN = time(20, 0, 0)  # 3:00 PM
 channel_id = 715038755211444324 
 
 async def called_once_a_day():  # Fired every day
+    lan = load()
     await bot.wait_until_ready()  # Make sure your guild cache is ready so the channel can be found via get_channel
     channel = bot.get_channel(channel_id) # Note: It's more efficient to do bot.get_guild(guild_id).get_channel(channel_id) as there's less looping involved, but just get_channel still works fine
-    td = lan - datetime.now()
+    td = lan - datetime.utcnow()
     days = td.days
-    await channel.send("OMG LAN IN " + str(days))
+    await channel.send("OMG LAN IN " + str(days+1) + " DAYS")
 
 async def background_task():
     now = datetime.utcnow()
