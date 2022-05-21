@@ -19,6 +19,8 @@ import pickle
 
 import glob
 
+import openai 
+
 def save(to_save):
     pickle.dump( to_save, open( "save.p", "wb" ) )
 
@@ -29,6 +31,8 @@ lan = None
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 help_command = commands.DefaultHelpCommand(
     no_category = 'Commands'
@@ -170,6 +174,26 @@ async def lan(ctx, *, question):
     response += random.choice([a1, a2])
 
     await ctx.send(response)
+
+@bot.command(name='hey', help='Ask the bot any question, give the bot a task, or even just have a chat')
+async def lan(ctx, *, words):
+    if len(words) == 0:
+        await ctx.send("Well say something!")
+        return  
+
+    msg = await ctx.send("Thinking...")
+
+    response = openai.Completion.create(
+        engine="text-davinci-002",
+        prompt=words,
+        temperature=0.7,
+        max_tokens=256,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+    await msg.delete()
+    await ctx.send(response["choices"][0]["text"])
 
 bot.loop.create_task(background_task())
 bot.run(TOKEN)

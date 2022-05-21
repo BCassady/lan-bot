@@ -1,3 +1,4 @@
 discord.py==1.7.3
+openai==0.18.1
 python-dotenv==0.20.0
 pytz==2021.3
