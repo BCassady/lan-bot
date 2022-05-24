@@ -141,6 +141,8 @@ async def called_once_a_day():  # Fired every day
     td = lan - datetime.utcnow()
     days = td.days
     await channel.send("OMG LAN IN " + str(days+1) + " DAYS")
+    if days+1 == 0:
+        lan_time()
 
 async def background_task():
     now = datetime.utcnow()
@@ -157,6 +159,25 @@ async def background_task():
         tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
         seconds = (tomorrow - now).total_seconds()  # Seconds until tomorrow (midnight)
         await asyncio.sleep(seconds)   # Sleep until tomorrow and then the loop will start a new iteration
+
+async def lan_time():
+    channel = bot.get_channel(channel_id)
+    await channel.send("OH")
+    await channel.send("MY")
+    await channel.send("GOD")
+    time.sleep(1)
+    await channel.send("IT")
+    await channel.send("IS")
+    await channel.send("TIME")
+    await channel.send("FOR")
+    await channel.send("LANNNN!!!")
+    time.sleep(5)
+    await channel.send("IM SO EXCITED")
+    time.sleep(1)
+    await channel.send("https://tenor.com/view/im-so-excited-the-pointer-sisters-pointer-sisters-i-just-cant-hide-it-gif-14122671")
+    time.sleep(1)
+    await channel.send("AND I JUST CANT HIDE IT")
+
 
 @bot.command(name='ask', help='Answers an \"or\" question')
 async def lan(ctx, *, question):
@@ -187,10 +208,10 @@ async def lan(ctx, *, words):
         engine="text-davinci-002",
         prompt=words,
         temperature=0.7,
-        max_tokens=256,
+        max_tokens=512,
         top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0
+        frequency_penalty=1,
+        presence_penalty=1
     )
     await msg.delete()
     await ctx.send(response["choices"][0]["text"])
