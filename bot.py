@@ -109,7 +109,7 @@ async def time_until_lan(ctx):
 
 @bot.command(name='lan', help='Missing lan right now? Get a random lan image')
 async def lan(ctx):
-    file_path_type = ["./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.mov"]
+    file_path_type = ["./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpg", "./imgs/*.jpg", "./imgs/*.jpg", "./imgs/*.jpg", "./imgs/*.mov", "./imgs/*.mp4"]
     images = glob.glob(random.choice(file_path_type))
 
     random_image = random.choice(images)
@@ -143,7 +143,7 @@ async def called_once_a_day():  # Fired every day
     await channel.send("OMG LAN IN " + str(days+1) + " DAYS")
     if days+1 == 0:
         lan_time()
-
+    
 async def background_task():
     now = datetime.utcnow()
     if now.time() > WHEN:  # Make sure loop doesn't start after {WHEN} as then it will send immediately the first time as negative seconds will make the sleep yield instantly
