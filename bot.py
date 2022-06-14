@@ -109,7 +109,7 @@ async def time_until_lan(ctx):
 
 @bot.command(name='lan', help='Missing lan right now? Get a random lan image')
 async def lan(ctx):
-    file_path_type = ["./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpg", "./imgs/*.jpg", "./imgs/*.jpg", "./imgs/*.jpg", "./imgs/*.mov", "./imgs/*.mp4"]
+    file_path_type = ["./imgs/*.png", "./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpg", "./imgs/*.jpg", "./imgs/*.jpg", "./imgs/*.jpg", "./imgs/*.jpg", "./imgs/*.mov", "./imgs/*.mp4"]
     images = glob.glob(random.choice(file_path_type))
 
     random_image = random.choice(images)
