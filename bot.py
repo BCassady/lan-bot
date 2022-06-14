@@ -101,14 +101,14 @@ async def time_until_lan(ctx):
     await ctx.send(response)
 
 @bot.command(name='rot', help='Displays random rot wiki link')
-async def time_until_lan(ctx):
+async def rot(ctx):
     choices = pickle.load( open( "realmeye.p", "rb" ) )
     chosen = random.choice(choices)
 
     await ctx.send("https://www.realmeye.com" + chosen)
 
 @bot.command(name='lan', help='Missing lan right now? Get a random lan image')
-async def lan(ctx):
+async def lan_cmd(ctx):
     file_path_type = ["./imgs/*.png", "./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpeg", "./imgs/*.jpg", "./imgs/*.jpg", "./imgs/*.jpg", "./imgs/*.jpg", "./imgs/*.jpg", "./imgs/*.mov", "./imgs/*.mp4"]
     images = glob.glob(random.choice(file_path_type))
 
@@ -119,7 +119,7 @@ async def lan(ctx):
         await ctx.send(file=picture)
 
 @bot.command(name='8ball', help='Answers any question you have')
-async def lan(ctx, *, question):
+async def eightball(ctx, *, question):
 
     answers = ["Oh yes brudda", "If you go to LAN, yes", "Without a doubt", "Yes", "I would bet my life on it",
     "As likely as the toilet is to be filled at LAN", "As far as I can tell, yes", "No", "Nope", "No shot", "No way brudda", "Hell no",
@@ -180,7 +180,7 @@ async def lan_time():
 
 
 @bot.command(name='ask', help='Answers an \"or\" question')
-async def lan(ctx, *, question):
+async def ask(ctx, *, question):
 
     if "or" not in question:
         await ctx.send("Question must contain \"or\"")
@@ -197,7 +197,7 @@ async def lan(ctx, *, question):
     await ctx.send(response)
 
 @bot.command(name='hey', help='Ask the bot any question, give the bot a task, or even just have a chat')
-async def lan(ctx, *, words):
+async def hey(ctx, *, words):
     if len(words) == 0:
         await ctx.send("Well say something!")
         return  
