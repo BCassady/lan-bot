@@ -216,5 +216,20 @@ async def hey(ctx, *, words):
     await msg.delete()
     await ctx.send(response["choices"][0]["text"])
 
+@bot.command(name='poll', help='Create a poll between two options')
+async def poll(ctx, question, option1, emoji1, option2, emoji2):
+    if question == None or option1 == None or option2 == None or emoji1 == None or emoji2 == None:
+        await ctx.send("Please enter in the form '!poll \"question\" option1 emoji1 option2 emoji2")
+        return 
+    
+    line1 = option1 + " " + emoji1
+    line2 = option2 + " " + emoji2
+
+    embed = discord.Embed(title=question, description= line1 + "\n" + line2, color=0xFF5733)
+    msg = await ctx.send(embed=embed)
+    await msg.add_reaction(emoji1)
+    await msg.add_reaction(emoji2)
+    
+
 bot.loop.create_task(background_task())
 bot.run(TOKEN)
