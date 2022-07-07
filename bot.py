@@ -21,6 +21,8 @@ import glob
 
 import openai 
 
+import sys
+
 def save(to_save):
     pickle.dump( to_save, open( "save.p", "wb" ) )
 
@@ -132,6 +134,7 @@ async def eightball(ctx, *, question):
     await ctx.send(response)
 
 WHEN = time(20, 0, 0)  # 3:00 PM
+WHEN_EXIT = time(7, 0, 0)
 channel_id = 715038755211444324 
 
 async def called_once_a_day():  # Fired every day
@@ -143,6 +146,27 @@ async def called_once_a_day():  # Fired every day
     await channel.send("OMG LAN IN " + str(days+1) + " DAYS")
     if days+1 == 0:
         lan_time()
+
+async def leave():
+    await bot.logout()
+    sys.exit([0])
+
+async def other_background_task():
+    now = datetime.utcnow()
+    if now.time() > WHEN_EXIT:  # Make sure loop doesn't start after {WHEN} as then it will send immediately the first time as negative seconds will make the sleep yield instantly
+        tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
+        seconds = (tomorrow - now).total_seconds()  # Seconds until tomorrow (midnight)
+        await asyncio.sleep(seconds)   # Sleep until tomorrow and then the loop will start 
+    while True:
+        now = datetime.utcnow()
+        target_time = datetime.combine(now.date(), WHEN)  # 6:00 PM today (In UTC)
+        seconds_until_target = (target_time - now).total_seconds()
+        await asyncio.sleep(seconds_until_target)  # Sleep until we hit the target time
+        await leave()  # Call the helper function that sends the message
+        tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
+        seconds = (tomorrow - now).total_seconds()  # Seconds until tomorrow (midnight)
+        await asyncio.sleep(seconds)   # Sleep until tomorrow and then the loop will start a new iteration
+
     
 async def background_task():
     now = datetime.utcnow()
