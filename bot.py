@@ -31,10 +31,12 @@ def load():
 
 lan = None
 
-load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
+current_conversations = {}
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+load_dotenv()
+TOKEN = ""
+
+openai.api_key = ""
 
 help_command = commands.DefaultHelpCommand(
     no_category = 'Commands'
@@ -253,6 +255,66 @@ async def poll(ctx, question, option1, emoji1, option2, emoji2):
     msg = await ctx.send(embed=embed)
     await msg.add_reaction(emoji1)
     await msg.add_reaction(emoji2)
+
+@bot.command(name='conversation', help='Start a conversation with the bot')
+async def conversation(ctx, command):
+    global current_conversations
+    channel = ctx.message.channel
+    if command == "start":
+        if ctx.author.id not in current_conversations:
+            current_conversations[ctx.author.id] = {}
+        current_conversations[ctx.author.id][channel.id] = [{"role": "system", "content": "You are a discord bot named LAN Bot, but you impersonate a human named Sarah. You are very helpful and can answer any questions they ask. At no point should you reveal you are an AI Language Model."}]
+        await ctx.send(F"Conversation started with {ctx.message.author.mention} in {channel.mention}, use '!conversation end' to end the conversation")
+    elif command == "end":
+        if ctx.author.id in current_conversations and channel.id in current_conversations[ctx.author.id]:
+            current_conversations[ctx.author.id].pop(channel.id)
+            if len(current_conversations[ctx.author.id]) == 0:
+                current_conversations.pop(ctx.author.id)
+        await ctx.send(f"Conversation ended with {ctx.message.author.mention} in {channel.mention}")
+    else:
+        await ctx.send("Please enter either 'start' or 'end'")
+
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return
+
+    if message.author.id in current_conversations and message.channel.id in current_conversations[message.author.id] and message.content != "!conversation end":
+        new_message = {"role": "user", "content": message.content}
+        current_conversations[message.author.id][message.channel.id].append(new_message)
+        response = openai.ChatCompletion.create(
+            model = "gpt-3.5-turbo",
+            messages = current_conversations[message.author.id][message.channel.id],
+            temperature = 0.3,
+        )
+        new_message = {"role": "assistant", "content": response["choices"][0]["message"]["content"]}
+        current_conversations[message.author.id][message.channel.id].append(new_message)
+        to_send = new_message["content"]
+        while len(to_send) > 1900:
+            await message.channel.send(to_send[:2000])
+            to_send = to_send[2000:]
+            
+        await message.channel.send(to_send)
+
+    await bot.process_commands(message)
+
+@bot.command(name='image', help="Generate an image based on a prompt")
+async def image(ctx, *, prompt):
+    if prompt == None:
+        await ctx.send("Please enter a prompt")
+        return 
+
+    msg = await ctx.send("Thinking...")
+
+    response = openai.Image.create(
+        prompt=prompt,
+        n=1,
+        size="1024x1024",
+    )
+        
+    await msg.delete()
+    await ctx.send(response['data'][0]['url'])
+
     
 
 bot.loop.create_task(background_task())
